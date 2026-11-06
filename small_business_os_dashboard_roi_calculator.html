@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Small Business Strategic OS & ROI Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 3px; }
+    </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
+
+    <div class="min-h-full flex flex-col">
+        <!-- Top Navigation -->
+        <header class="sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 glass">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-brand-600 text-white p-2 rounded-xl shadow-md">
+                        <i class="fa-solid fa-compass text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight">Focus & Growth OS</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Small Team Executive Command Center</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Tab Switcher -->
+                    <nav class="hidden md:flex space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-sm font-medium">
+                        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="px-4 py-1.5 rounded-lg transition-all shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
+                            <i class="fa-solid fa-layer-group mr-1.5 text-brand-500"></i>Dashboard
+                        </button>
+                        <button onclick="switchTab('matrix')" id="nav-matrix" class="px-4 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                            <i class="fa-solid fa-table-cells-large mr-1.5 text-amber-500"></i>Eisenhower
+                        </button>
+                        <button onclick="switchTab('calculator')" id="nav-calculator" class="px-4 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                            <i class="fa-solid fa-calculator mr-1.5 text-emerald-500"></i>ROI & Financials
+                        </button>
+                        <button onclick="switchTab('checklist')" id="nav-checklist" class="px-4 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                            <i class="fa-solid fa-list-check mr-1.5 text-indigo-500"></i>Founders Checklist
+                        </button>
+                    </nav>
+
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block text-amber-400"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Sub-Nav -->
+            <div class="flex md:hidden border-t border-slate-200 dark:border-slate-800 overflow-x-auto scrollbar-thin px-4 py-2 space-x-2 text-xs font-medium">
+                <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="px-3 py-1.5 rounded-lg bg-brand-500 text-white whitespace-nowrap">Dashboard</button>
+                <button onclick="switchTab('matrix')" id="mob-nav-matrix" class="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">Matrix</button>
+                <button onclick="switchTab('calculator')" id="mob-nav-calculator" class="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">ROI Calculator</button>
+                <button onclick="switchTab('checklist')" id="mob-nav-checklist" class="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">Checklist</button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-dashboard" class="space-y-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-brand-600 via-brand-700 to-indigo-800 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+                    <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 flex items-center justify-center">
+                        <i class="fa-solid fa-rocket text-9xl"></i>
+                    </div>
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="bg-white/20 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">Early-Stage Execution Mode</span>
+                        <h2 class="text-2xl font-bold mt-2">Cut the Noise, Drive Revenue & Traction</h2>
+                        <p class="text-brand-100 text-sm mt-1">When resources are tight, 80% of your results come from 20% of your efforts. Focus exclusively on sales, delivery, and systemizing.</p>
+                    </div>
+                </div>
+
+                <!-- Top Metric Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Daily Top 3 Status</span>
+                            <span class="p-2 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-lg text-xs font-bold" id="top3-progress-text">0/3 Completed</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+                                <div id="top3-progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Estimated ROI Ratio</span>
+                            <span id="dash-roi-badge" class="p-1.5 bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 rounded-md text-xs font-bold">+0%</span>
+                        </div>
+                        <div class="mt-1">
+                            <h3 id="dash-roi-val" class="text-2xl font-bold text-slate-900 dark:text-white">0.0x</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Net Return on Invested Capital</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Monthly Burn / Cost</span>
+                            <i class="fa-solid fa-receipt text-rose-500 text-sm"></i>
+                        </div>
+                        <div class="mt-1">
+                            <h3 id="dash-cost-val" class="text-2xl font-bold text-slate-900 dark:text-white">$0</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Fixed + Variable Outflow</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Delegation Potential</span>
+                            <i class="fa-solid fa-users text-amber-500 text-sm"></i>
+                        </div>
+                        <div class="mt-1">
+                            <h3 id="dash-delegate-val" class="text-2xl font-bold text-slate-900 dark:text-white">0 Tasks</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Quadrant 3 Low-value work</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Grid: Daily Focus + Quick Matrix Snippet -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left (2 Cols): Daily 80/20 Must-Dos -->
+                    <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center">
+                                    <i class="fa-solid fa-bullseye text-rose-500 mr-2"></i>Daily Core 3 Focus (80/20 Rule)
+                                </h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">If you only achieve 3 things today to move the business forward, what must they be?</p>
+                            </div>
+                            <button onclick="switchTab('matrix')" class="text-xs text-brand-600 dark:text-brand-400 font-semibold hover:underline">Manage All Tasks &rarr;</button>
+                        </div>
+
+                        <div id="top3-list" class="space-y-3">
+                            <!-- Populated via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Right (1 Col): Quick Focus & System Status -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-900 dark:text-white flex items-center mb-1">
+                                <i class="fa-solid fa-compass-drafting text-indigo-500 mr-2"></i>Founder Priority Mindset
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Early stage priority framework</p>
+                            
+                            <div class="space-y-3 text-sm">
+                                <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60">
+                                    <div class="font-semibold text-amber-900 dark:text-amber-300 text-xs uppercase tracking-wider mb-1">1. Sales & Revenue First</div>
+                                    <p class="text-slate-700 dark:text-slate-300 text-xs">Without revenue, you can't optimize anything. Allocate 60% of time to customer calls & closing deals.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/60">
+                                    <div class="font-semibold text-blue-900 dark:text-blue-300 text-xs uppercase tracking-wider mb-1">2. Eliminate Low-Value Drag</div>
+                                    <p class="text-slate-700 dark:text-slate-300 text-xs">If a task yields &lt; $50/hr value (e.g. micromanaging small graphics), delegate or drop it.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60">
+                                    <div class="font-semibold text-emerald-900 dark:text-emerald-300 text-xs uppercase tracking-wider mb-1">3. Systemize Early</div>
+                                    <p class="text-slate-700 dark:text-slate-300 text-xs">When you do a task 3 times, write a simple 1-page SOP so someone else can take it over.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/60">
+                            <button onclick="switchTab('checklist')" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-xl text-xs font-semibold transition flex items-center justify-center">
+                                Open Systemization Checklist <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: EISENHOWER MATRIX -->
+            <div id="tab-matrix" class="hidden space-y-6">
+                <!-- Header & Controls -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Eisenhower Strategic Matrix</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Classify tasks by Urgency and Importance to protect long-term growth</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddTaskModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center">
+                            <i class="fa-solid fa-plus mr-1.5"></i>Add Task
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2x2 Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Q1: DO FIRST -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-rose-200 dark:border-rose-900/40 overflow-hidden shadow-sm flex flex-col">
+                        <div class="bg-rose-500/10 border-b border-rose-200 dark:border-rose-900/40 px-4 py-3 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">DO FIRST (Urgent & Important)</h3>
+                            </div>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-semibold" id="count-q1">0</span>
+                        </div>
+                        <div class="p-4 flex-grow space-y-3 min-h-[220px]" id="quadrant-q1">
+                            <!-- Dynamic Content -->
+                        </div>
+                        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-700">
+                            Crises, urgent client issues, revenue-critical deadlines.
+                        </div>
+                    </div>
+
+                    <!-- Q2: SCHEDULE / STRATEGY -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-blue-200 dark:border-blue-900/40 overflow-hidden shadow-sm flex flex-col">
+                        <div class="bg-blue-500/10 border-b border-blue-200 dark:border-blue-900/40 px-4 py-3 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">SCHEDULE (Not Urgent, Important)</h3>
+                            </div>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold" id="count-q2">0</span>
+                        </div>
+                        <div class="p-4 flex-grow space-y-3 min-h-[220px]" id="quadrant-q2">
+                            <!-- Dynamic Content -->
+                        </div>
+                        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-700">
+                            ★ High leverage area: SOPs, long-term sales, team training, strategic planning.
+                        </div>
+                    </div>
+
+                    <!-- Q3: DELEGATE -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-amber-200 dark:border-amber-900/40 overflow-hidden shadow-sm flex flex-col">
+                        <div class="bg-amber-500/10 border-b border-amber-200 dark:border-amber-900/40 px-4 py-3 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">DELEGATE (Urgent, Not Important)</h3>
+                            </div>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-semibold" id="count-q3">0</span>
+                        </div>
+                        <div class="p-4 flex-grow space-y-3 min-h-[220px]" id="quadrant-q3">
+                            <!-- Dynamic Content -->
+                        </div>
+                        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-700">
+                            Routine support, basic admin, non-vital notifications. Assign to team/VAs.
+                        </div>
+                    </div>
+
+                    <!-- Q4: ELIMINATE -->
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm flex flex-col">
+                        <div class="bg-slate-500/10 border-b border-slate-200 dark:border-slate-700 px-4 py-3 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-3 h-3 rounded-full bg-slate-400"></span>
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm">ELIMINATE (Not Urgent, Not Important)</h3>
+                            </div>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold" id="count-q4">0</span>
+                        </div>
+                        <div class="p-4 flex-grow space-y-3 min-h-[220px]" id="quadrant-q4">
+                            <!-- Dynamic Content -->
+                        </div>
+                        <div class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 text-[11px] text-slate-400 border-t border-slate-100 dark:border-slate-700">
+                            Time wasters, excessive research, low-value perfectionism.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: ROI & FINANCIAL ESTIMATOR -->
+            <div id="tab-calculator" class="hidden space-y-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Business Unit / Project Financial & ROI Estimator</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Estimate project profitability, return on investment, and break-even sales units before committing resources.</p>
+                        </div>
+                        <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-semibold">Real-time Simulation</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Inputs Column -->
+                        <div class="space-y-4 bg-slate-50 dark:bg-slate-900/50 p-5 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <h3 class="font-bold text-sm text-slate-900 dark:text-white border-b pb-2 border-slate-200 dark:border-slate-800">1. Financial Inputs</h3>
+                            
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Project Name / Unit</label>
+                                <input type="text" id="calc-name" value="New Customer Acquisition Campaign" class="w-full px-3 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Upfront / Fixed Investment ($)</label>
+                                <input type="number" id="calc-investment" value="5000" oninput="recalculateROI()" class="w-full px-3 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                                <span class="text-[10px] text-slate-400">Tools, ad spend, initial setup cost</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Monthly Recurring Operating Cost ($)</label>
+                                <input type="number" id="calc-monthly-cost" value="1200" oninput="recalculateROI()" class="w-full px-3 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                                <span class="text-[10px] text-slate-400">Salaries, server, subscriptions</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Price per Sale / Unit ($)</label>
+                                <input type="number" id="calc-price" value="500" oninput="recalculateROI()" class="w-full px-3 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Estimated Sales Volume (Units / Mo)</label>
+                                <input type="number" id="calc-volume" value="15" oninput="recalculateROI()" class="w-full px-3 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Evaluation Period (Months)</label>
+                                <input type="range" id="calc-months" min="1" max="24" value="6" oninput="document.getElementById('months-val').innerText = this.value; recalculateROI();" class="w-full">
+                                <div class="flex justify-between text-xs text-slate-400">
+                                    <span>1 Mo</span>
+                                    <span id="months-val" class="font-bold text-brand-500">6</span>
+                                    <span>24 Mos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results & Breakdowns -->
+                        <div class="lg:col-span-2 space-y-6 flex flex-col justify-between">
+                            <!-- Calculated Cards -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-[11px] text-slate-400 uppercase block font-medium">Total Revenue</span>
+                                    <span id="res-total-rev" class="text-lg font-bold text-slate-900 dark:text-white">$0</span>
+                                </div>
+                                <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+                                    <span class="text-[11px] text-slate-400 uppercase block font-medium">Total Cost</span>
+                                    <span id="res-total-cost" class="text-lg font-bold text-slate-900 dark:text-white">$0</span>
+                                </div>
+                                <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/60">
+                                    <span class="text-[11px] text-emerald-600 dark:text-emerald-400 uppercase block font-medium">Net Profit</span>
+                                    <span id="res-net-profit" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">$0</span>
+                                </div>
+                                <div class="p-4 bg-brand-50 dark:bg-brand-950/40 rounded-xl border border-brand-200 dark:border-brand-800/60">
+                                    <span class="text-[11px] text-brand-600 dark:text-brand-400 uppercase block font-medium">ROI Ratio</span>
+                                    <span id="res-roi-percentage" class="text-lg font-bold text-brand-600 dark:text-brand-400">0%</span>
+                                </div>
+                            </div>
+
+                            <!-- Additional Metric Insights -->
+                            <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Monthly Break-Even Sales Needed:</span>
+                                    <span id="res-breakeven-units" class="font-bold text-slate-900 dark:text-white ml-1">0 units</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500 dark:text-slate-400">Payback Period:</span>
+                                    <span id="res-payback" class="font-bold text-slate-900 dark:text-white ml-1">N/A</span>
+                                </div>
+                            </div>
+
+                            <!-- Visual Chart -->
+                            <div class="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-200 dark:border-slate-800 h-64 relative">
+                                <canvas id="roiChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: FOUNDERS SYSTEMIZATION CHECKLIST -->
+            <div id="tab-checklist" class="hidden space-y-6">
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">Early-Stage Systemization & Delegation Playbook</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Transition from doing everything yourself to building a reproducible business system.</p>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-full">Phase: 0 to 1 Scaling</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Module 1: Sales & Traction -->
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-3">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center">
+                                <i class="fa-solid fa-chart-line text-brand-500 mr-2"></i>1. Core Sales & Traction System
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Define 1 ICP (Ideal Customer Profile):</strong> Stop trying to serve everyone; target the buyer with highest urgency and willingness to pay.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Standardize Sales Pitch & Objection Handling:</strong> Write down top 5 customer objections and the exact response that converts.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Track Weekly Pipeline:</strong> Keep a simple list of Leads &rarr; Proposal &rarr; Closed Deals. Focus on conversion rate.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Module 2: Operations & Delegation -->
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-3">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center">
+                                <i class="fa-solid fa-gears text-amber-500 mr-2"></i>2. SOP & Delegation Foundations
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Record Video Screen Shares for Repeat Tasks:</strong> Use Loom/OBS to record yourself doing onboarding or customer support once.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Establish a 1-Page Checklist per Role:</strong> Give assistant or team members clear "Definition of Done" for daily routines.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Offload $15/hr Tasks First:</strong> Data entry, invoicing, basic scheduling, first-line customer inquiries.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Module 3: Cash & Financial Hygiene -->
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-3">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center">
+                                <i class="fa-solid fa-piggy-bank text-emerald-500 mr-2"></i>3. Cashflow & Financial Defense
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Review Weekly Cash Runway:</strong> Know exact bank balance, outstanding invoices, and upcoming payroll.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Audit Subscriptions Monthly:</strong> Cancel unused SaaS tools, unneeded user seats, and redundant services.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Tighten Payment Terms:</strong> Require upfront deposits (e.g. 50%) for custom work to avoid financing client cash flow.</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Module 4: Personal Leadership -->
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-5 space-y-3">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center">
+                                <i class="fa-solid fa-brain text-indigo-500 mr-2"></i>4. Energy & Focus Safeguards
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" checked class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Block 2 Hours for Deep Work Daily:</strong> Turn off Slack/email notifications to execute Q2 high-leverage items.</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Batch Communication:</strong> Process email & team questions in 2 designated time windows (e.g., 11 AM & 4 PM).</span>
+                                </label>
+                                <label class="flex items-start space-x-2.5 cursor-pointer">
+                                    <input type="checkbox" class="mt-0.5 rounded text-brand-600 focus:ring-brand-500">
+                                    <span class="text-slate-700 dark:text-slate-300"><strong>Conduct Weekly Retro:</strong> Every Friday, spend 15 mins reviewing what generated money vs. what wasted time.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADD TASK MODAL -->
+    <div id="addTaskModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700 shadow-xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                <h3 class="font-bold text-base text-slate-900 dark:text-white">Add New Strategic Task</h3>
+                <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Task Description</label>
+                    <input type="text" id="task-title" placeholder="e.g., Call 5 key accounts for renewal" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-brand-500 text-sm">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Urgency</label>
+                        <select id="task-urgency" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="high">High (Needs immediate action)</option>
+                            <option value="low">Low (Can wait/be planned)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Importance</label>
+                        <select id="task-importance" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="high">High (High ROI/Long term value)</option>
+                            <option value="low">Low (Maintenance/Minor detail)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="task-top3" class="rounded text-brand-600 focus:ring-brand-500">
+                        <span class="text-slate-700 dark:text-slate-300 font-medium">Flag as Daily Top 3 Must-Do (80/20)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-700">
+                <button onclick="closeAddTaskModal()" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-200">Cancel</button>
+                <button onclick="saveTask()" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-xs font-semibold hover:bg-brand-700 shadow-sm">Save Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC & CHART SCRIPT -->
+    <script>
+        // State Storage
+        let tasks = JSON.parse(localStorage.getItem('biz_os_tasks')) || [
+            { id: 1, title: 'Close proposal for Key Account A', urgency: 'high', importance: 'high', top3: true, completed: false },
+            { id: 2, title: 'Draft SOP for customer onboarding', urgency: 'low', importance: 'high', top3: true, completed: false },
+            { id: 3, title: 'Fix payroll invoice discrepancy', urgency: 'high', importance: 'low', top3: false, completed: false },
+            { id: 4, title: 'Review social media ad variants', urgency: 'low', importance: 'low', top3: false, completed: false },
+            { id: 5, title: 'Outbound sales calls to 10 qualified leads', urgency: 'high', importance: 'high', top3: true, completed: false }
+        ];
+
+        let roiChart = null;
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            if (roiChart) updateChartColors();
+        });
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Navigation Switcher
+        function switchTab(tabId) {
+            ['dashboard', 'matrix', 'calculator', 'checklist'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                
+                // Desktop nav link update
+                const btn = document.getElementById(`nav-${t}`);
+                if (btn) {
+                    btn.className = (t === tabId) 
+                        ? 'px-4 py-1.5 rounded-lg transition-all shadow-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white'
+                        : 'px-4 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+                }
+
+                // Mobile nav link update
+                const mobBtn = document.getElementById(`mob-nav-${t}`);
+                if (mobBtn) {
+                    mobBtn.className = (t === tabId)
+                        ? 'px-3 py-1.5 rounded-lg bg-brand-500 text-white whitespace-nowrap'
+                        : 'px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap';
+                }
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            if (tabId === 'calculator' && !roiChart) {
+                initROIChart();
+            }
+        }
+
+        // Eisenhower Tasks Logic
+        function renderTasks() {
+            // Clear Quadrants
+            ['q1', 'q2', 'q3', 'q4'].forEach(q => document.getElementById(`quadrant-${q}`).innerHTML = '');
+            
+            let counts = { q1: 0, q2: 0, q3: 0, q4: 0 };
+            let top3Tasks = [];
+
+            tasks.forEach(task => {
+                let targetQuad = '';
+                if (task.urgency === 'high' && task.importance === 'high') targetQuad = 'q1';
+                else if (task.urgency === 'low' && task.importance === 'high') targetQuad = 'q2';
+                else if (task.urgency === 'high' && task.importance === 'low') targetQuad = 'q3';
+                else targetQuad = 'q4';
+
+                counts[targetQuad]++;
+                if (task.top3) top3Tasks.push(task);
+
+                const el = document.createElement('div');
+                el.className = `p-3 rounded-xl border transition-all flex items-center justify-between ${
+                    task.completed 
+                        ? 'bg-slate-100 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 opacity-60' 
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm hover:border-slate-300'
+                }`;
+
+                el.innerHTML = `
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTaskComplete(${task.id})" class="rounded text-brand-600 focus:ring-brand-500 h-4 w-4">
+                        <div class="truncate">
+                            <p class="text-xs font-semibold ${task.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'} truncate">${escapeHtml(task.title)}</p>
+                            ${task.top3 ? '<span class="inline-block mt-0.5 text-[10px] font-bold text-rose-500 uppercase tracking-wider">★ Top 3 Focus</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1 ml-2 flex-shrink-0">
+                        <button onclick="toggleTop3(${task.id})" title="Toggle Top 3" class="p-1.5 text-slate-400 hover:text-amber-500 text-xs">
+                            <i class="fa-${task.top3 ? 'solid text-amber-500' : 'regular'} fa-star"></i>
+                        </button>
+                        <button onclick="deleteTask(${task.id})" title="Delete" class="p-1.5 text-slate-400 hover:text-rose-500 text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+
+                document.getElementById(`quadrant-${targetQuad}`).appendChild(el);
+            });
+
+            // Update Counts
+            Object.keys(counts).forEach(q => {
+                document.getElementById(`count-${q}`).innerText = counts[q];
+            });
+
+            // Update Delegate metric on dashboard
+            document.getElementById('dash-delegate-val').innerText = `${counts.q3} Tasks`;
+
+            // Render Top 3 list on Dashboard
+            renderTop3(top3Tasks);
+
+            // Save state
+            localStorage.setItem('biz_os_tasks', JSON.stringify(tasks));
+        }
+
+        function renderTop3(top3Tasks) {
+            const container = document.getElementById('top3-list');
+            container.innerHTML = '';
+
+            if (top3Tasks.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">No Top 3 focus tasks selected. Star tasks in the Eisenhower Matrix to prioritize them here!</p>`;
+            } else {
+                top3Tasks.slice(0, 3).forEach((task, idx) => {
+                    const item = document.createElement('div');
+                    item.className = `p-3.5 rounded-xl border flex items-center justify-between ${
+                        task.completed 
+                            ? 'bg-slate-50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 opacity-60' 
+                            : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700'
+                    }`;
+
+                    item.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <span class="w-6 h-6 rounded-full bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 text-xs font-bold flex items-center justify-center">${idx + 1}</span>
+                            <span class="text-xs font-medium ${task.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${escapeHtml(task.title)}</span>
+                        </div>
+                        <button onclick="toggleTaskComplete(${task.id})" class="px-2.5 py-1 text-xs rounded-lg font-semibold ${
+                            task.completed 
+                                ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' 
+                                : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                        }">
+                            ${task.completed ? 'Done' : 'Complete'}
+                        </button>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+
+            // Progress bar update
+            const completedCount = top3Tasks.slice(0, 3).filter(t => t.completed).length;
+            const totalCount = Math.min(top3Tasks.length, 3);
+            const percentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+            
+            document.getElementById('top3-progress-bar').style.width = `${percentage}%`;
+            document.getElementById('top3-progress-text').innerText = `${completedCount}/${totalCount} Completed`;
+        }
+
+        function toggleTaskComplete(id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+            renderTasks();
+        }
+
+        function toggleTop3(id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, top3: !t.top3 } : t);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        function openAddTaskModal() {
+            document.getElementById('addTaskModal').classList.remove('hidden');
+            document.getElementById('addTaskModal').classList.add('flex');
+        }
+
+        function closeAddTaskModal() {
+            document.getElementById('addTaskModal').classList.add('hidden');
+            document.getElementById('addTaskModal').classList.remove('flex');
+            document.getElementById('task-title').value = '';
+        }
+
+        function saveTask() {
+            const title = document.getElementById('task-title').value.trim();
+            const urgency = document.getElementById('task-urgency').value;
+            const importance = document.getElementById('task-importance').value;
+            const top3 = document.getElementById('task-top3').checked;
+
+            if (!title) return;
+
+            tasks.push({
+                id: Date.now(),
+                title,
+                urgency,
+                importance,
+                top3,
+                completed: false
+            });
+
+            closeAddTaskModal();
+            renderTasks();
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // ROI Calculator Logic
+        function recalculateROI() {
+            const investment = parseFloat(document.getElementById('calc-investment').value) || 0;
+            const monthlyCost = parseFloat(document.getElementById('calc-monthly-cost').value) || 0;
+            const price = parseFloat(document.getElementById('calc-price').value) || 0;
+            const volume = parseFloat(document.getElementById('calc-volume').value) || 0;
+            const months = parseInt(document.getElementById('calc-months').value) || 1;
+
+            const monthlyRev = price * volume;
+            const totalRev = monthlyRev * months;
+            const totalCost = investment + (monthlyCost * months);
+            const netProfit = totalRev - totalCost;
+            const roiRatio = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+            const roiMultiplier = totalCost > 0 ? (totalRev / totalCost) : 0;
+
+            // Monthly Break even units
+            const breakevenUnits = price > 0 ? Math.ceil(monthlyCost / price) : 0;
+
+            // Payback Period
+            let paybackText = 'N/A';
+            const monthlyNetProfit = monthlyRev - monthlyCost;
+            if (monthlyNetProfit > 0) {
+                const monthsToPayback = (investment / monthlyNetProfit).toFixed(1);
+                paybackText = `${monthsToPayback} months`;
+            } else if (investment === 0 && monthlyNetProfit >= 0) {
+                paybackText = 'Immediate';
+            } else {
+                paybackText = 'Negative cash flow';
+            }
+
+            // Update UI
+            document.getElementById('res-total-rev').innerText = `$${totalRev.toLocaleString()}`;
+            document.getElementById('res-total-cost').innerText = `$${totalCost.toLocaleString()}`;
+            document.getElementById('res-net-profit').innerText = `$${netProfit.toLocaleString()}`;
+            document.getElementById('res-roi-percentage').innerText = `${roiRatio.toFixed(1)}%`;
+            document.getElementById('res-breakeven-units').innerText = `${breakevenUnits} units/mo`;
+            document.getElementById('res-payback').innerText = paybackText;
+
+            // Sync with Dashboard Cards
+            document.getElementById('dash-roi-val').innerText = `${roiMultiplier.toFixed(2)}x`;
+            document.getElementById('dash-roi-badge').innerText = `${roiRatio >= 0 ? '+' : ''}${roiRatio.toFixed(0)}%`;
+            document.getElementById('dash-cost-val').innerText = `$${monthlyCost.toLocaleString()}`;
+
+            updateChartData(months, investment, monthlyCost, price, volume);
+        }
+
+        function initROIChart() {
+            const ctx = document.getElementById('roiChart').getContext('2d');
+            const isDark = document.documentElement.classList.contains('dark');
+
+            roiChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Cumulative Revenue',
+                            borderColor: '#0284c7',
+                            backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                            data: [],
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Cumulative Total Cost',
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'transparent',
+                            borderDash: [5, 5],
+                            data: [],
+                            fill: false,
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: isDark ? '#cbd5e1' : '#475569',
+                                font: { size: 11 }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b', font: { size: 10 } },
+                            grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
+                        },
+                        y: {
+                            ticks: { 
+                                color: isDark ? '#94a3b8' : '#64748b',
+                                font: { size: 10 },
+                                callback: value => '$' + value.toLocaleString()
+                            },
+                            grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
+                        }
+                    }
+                }
+            });
+
+            recalculateROI();
+        }
+
+        function updateChartData(months, investment, monthlyCost, price, volume) {
+            if (!roiChart) return;
+
+            const labels = ['Month 0'];
+            const revData = [0];
+            const costData = [investment];
+
+            const monthlyRev = price * volume;
+
+            for (let m = 1; m <= months; m++) {
+                labels.push(`Mo ${m}`);
+                revData.push(monthlyRev * m);
+                costData.push(investment + (monthlyCost * m));
+            }
+
+            roiChart.data.labels = labels;
+            roiChart.data.datasets[0].data = revData;
+            roiChart.data.datasets[1].data = costData;
+            roiChart.update();
+        }
+
+        function updateChartColors() {
+            if (!roiChart) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            roiChart.options.plugins.legend.labels.color = isDark ? '#cbd5e1' : '#475569';
+            roiChart.options.scales.x.ticks.color = isDark ? '#94a3b8' : '#64748b';
+            roiChart.options.scales.y.ticks.color = isDark ? '#94a3b8' : '#64748b';
+            roiChart.options.scales.x.grid.color = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            roiChart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            roiChart.update();
+        }
+
+        // Initialize App on Load
+        window.onload = function() {
+            renderTasks();
+            recalculateROI();
+        };
+    </script>
+</body>
+</html>
